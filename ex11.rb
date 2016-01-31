@@ -1,0 +1,1 @@
+# I like RubyDoc.info because it also has API information on a lot of gems
