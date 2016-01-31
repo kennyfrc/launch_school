@@ -3,3 +3,5 @@ def print_values_in_an_array
     puts "#{e}" if e > 5
   end
 end
+
+print_values_in_an_array

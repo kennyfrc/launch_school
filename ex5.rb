@@ -5,3 +5,5 @@ arr.push 11
 
 arr.pop
 arr.push 3
+
+puts arr

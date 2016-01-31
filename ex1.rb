@@ -3,3 +3,5 @@ def print_values_in_an_array
     puts "#{e}"
   end
 end
+
+print_values_in_an_array

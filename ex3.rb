@@ -7,3 +7,5 @@ def print_values_in_an_array(arr)
   end
   return new_arr
 end
+
+puts print_values_in_an_array(arr)

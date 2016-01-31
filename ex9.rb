@@ -5,3 +5,5 @@ h[:b] # this will return 2
 h[:e] = 5
 
 h.reject! {|k,v| v < 3.5} 
+
+puts h
