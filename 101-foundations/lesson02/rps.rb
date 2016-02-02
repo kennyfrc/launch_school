@@ -1,31 +1,28 @@
-VALID_CHOICES = ['rock', 'paper', 'scissors']
+VALID_CHOICES = %w(rock paper scissors).freeze
 
 def prompt(msg)
   Kernel.puts("=> #{msg}")
 end
 
 def display_results(player, computer)
-  if (player == 'rock' && computer == 'scissors') || 
+  if  (player == 'rock' && computer == 'scissors') ||
       (player == 'paper' && computer == 'rock') ||
-        (player == 'scissors' && computer == 'paper')
+      (player == 'scissors' && computer == 'paper')
     prompt("You won!")
-    sleep 1
-  elsif (player == 'rock' && computer == 'paper') ||
+  elsif   (player == 'rock' && computer == 'paper') ||
           (player == 'paper' && computer == 'scissors') ||
-            (player == 'scissors' && computer == 'rock')
+          (player == 'scissors' && computer == 'rock')
     prompt("Computer won!")
-    sleep 1
   else
     prompt("It's a tie!")
-    sleep 1
   end
-
 end
+sleep 1
 
 loop do
   choice = ''
-  loop do 
-    prompt("Choose one: #{VALID_CHOICES.join(", ")}")
+  loop do
+    prompt("Choose one: #{VALID_CHOICES.join(', ')}")
     choice = Kernel.gets().chomp().downcase
     sleep 1
 
@@ -38,7 +35,6 @@ loop do
 
   Kernel.puts("Your choice: #{choice}\nComputer Chose: #{computer_choice}")
   sleep 1
-
 
   display_results(choice, computer_choice)
 
