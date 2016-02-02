@@ -1,0 +1,6 @@
+# calculator messages yml
+
+en:
+  welcome: "Welcome to Calculator! Enter your name: "
+es:
+  welcome: "Bienvenido a la calculadora! Entre su nombre:"

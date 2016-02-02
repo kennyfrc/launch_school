@@ -1,25 +1,35 @@
+require 'yaml'
+# pass the loaded yml file to a MESSAGES contant
+MESSAGES = YAML.load_file('calculator_messages.yml')
+LANGUAGE = 'en'
+
+def messages(message, lang='en')
+  MESSAGES[lang][message]
+end
+
 def prompt(message)
   Kernel.puts("=> #{message}")
 end
 
 def valid_number?(num)
-  num.to_i != 0
+  num.to_i.to_s == num # it will return false if it's 00 || there's also regex, but it fails it you pass floats
 end
 
 def operation_to_message(op)
-  case op
-  when '1'
-    'Adding'
-  when '2'
-    'Subtracting'
-  when '3'
-    'Multiplying'
-  when '4'
-    'Dividing'
-  end
+  word =  case op
+          when '1'
+            'Adding'
+          when '2'
+            'Subtracting'
+          when '3'
+            'Multiplying'
+          when '4'
+            'Dividing'
+          end
+  word # this will help us add some more code into this method.
 end
 
-prompt("Welcome to Calculator! Enter your name:")
+prompt(messages('welcome', LANGUAGE))
 
 name = Kernel.gets().chomp()
 puts "Hello, #{name}!"
