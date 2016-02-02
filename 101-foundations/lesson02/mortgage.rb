@@ -100,7 +100,7 @@ loop do
   fixed_monthly_payment = loan_amount * (apr_in_months * (1 + apr_in_months)**loan_duration) / (((1 + apr_in_months)**loan_duration) - 1)
   loan_balance = loan_amount * ((((1 + apr_in_months)**loan_duration) - ((1 + apr_in_months)**loan_duration))) / (((1 + apr_in_months)**loan_duration) - 1)
 
-  prompt("Your fixed monthly payment is #{fixed_monthly_payment.round(2)} USD.")
+  prompt("Your fixed monthly payment is #{format('%02.2f', fixed_monthly_payment)} USD.")
   sleep 1
   prompt("Your loan balance is #{loan_balance.round(2)}.")
   sleep 1
