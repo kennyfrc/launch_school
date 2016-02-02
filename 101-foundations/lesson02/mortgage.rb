@@ -1,3 +1,5 @@
+# formulas used: http://www.mtgprofessor.com/formulas.htm
+
 def prompt(message)
   Kernel.puts("=> #{message}")
 end
