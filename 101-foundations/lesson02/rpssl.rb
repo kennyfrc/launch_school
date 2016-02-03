@@ -58,6 +58,18 @@ def spock_loss_conditions(player, computer)
   (player == 'spock' && computer == 'lizard')
 end
 
+# win / loss logger
+
+def log_win
+  $wl_log_player << 1
+  $wl_log_computer << 0
+end
+
+def log_loss
+  $wl_log_player << 0
+  $wl_log_computer << 1
+end
+
 # actual game logic
 
 def display_results(player, computer)
@@ -66,22 +78,35 @@ def display_results(player, computer)
       scissors_win_conditions(player, computer) ||
       lizard_win_conditions(player, computer) ||
       spock_win_conditions(player, computer)
-    prompt("You won!")
+    prompt("1 Point for Player!")
+    log_win
   elsif rock_loss_conditions(player, computer) ||
         paper_loss_conditions(player, computer) ||
         scissors_loss_conditions(player, computer) ||
         lizard_loss_conditions(player, computer) ||
         spock_loss_conditions(player, computer)
-    prompt("Computer won!")
+    prompt("1 Point for Computer!")
+    log_loss
   else
     prompt("It's a tie!")
   end
 end
 sleep 1
 
+# user-facing code is below this line
+
+prompt("Welcome to the RPSSL Tournament! Whoever gets 5 points first wins! Good Luck!")
+sleep 1
+
+$wl_log_player = []
+$wl_log_computer = []
+rounds = [1]
+
 loop do
   choice = ''
   loop do
+    prompt("ROUND #{rounds.reduce(:+)}")
+    sleep 1
     prompt("Choose one: #{VALID_CHOICES.join(', ')}\nShorthand characters (r, p, sc, l, sp) are also fine.") 
     choice = Kernel.gets().chomp().downcase
     sleep 1
@@ -110,9 +135,37 @@ loop do
   sleep 1
 
   display_results(choice, computer_choice)
-
-  prompt("Do you want to play again? (Y for yes / N for no)")
-  ans = gets.chomp.downcase
-  break if ans == 'n'
+  rounds << 1
   sleep 1
+
+  puts "-------------"
+  puts "/SCOREBOARD/\nPLAYER: #{$wl_log_player.count(1)}\nCOMPUTER: #{$wl_log_computer.count(1)}"
+  puts "-------------"
+  sleep 1
+
+  if [$wl_log_computer.reduce(:+), $wl_log_player.reduce(:+)].include?(5)
+    if $wl_log_computer.reduce(:+) == 5
+      prompt("The Computer has won the game! Better luck next time")
+      sleep 2
+
+      prompt("Do you want to play more? (Y for yes / N for no)")
+      ans = gets.chomp.downcase
+      break if ans == 'n'
+
+      $wl_log_player = []
+      $wl_log_computer = []
+      rounds = [1]
+    else
+      prompt("You have won! Woohoo!")
+      sleep 2
+      
+      prompt("Do you want to play more? (Y for yes / N for no)")
+      ans = gets.chomp.downcase
+      break if ans == 'n'
+
+      $wl_log_player = []
+      $wl_log_computer = []
+      rounds = [1]
+    end
+  end
 end
