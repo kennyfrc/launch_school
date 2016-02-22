@@ -12,7 +12,6 @@ def prompt(msg)
 end
 
 def display_board(brd, player_score, computer_score, rounds)
-  system 'clear'
   puts "SCOREBOARD => Player: #{player_score.count(1)} | Computer: #{computer_score.count(1)}"
   puts "ROUND #{rounds.reduce(:+)}"
   puts "LEGEND => Player: #{PLAYER_MARKER}; Computer: #{COMPUTER_MARKER}"
@@ -30,13 +29,6 @@ def display_board(brd, player_score, computer_score, rounds)
   puts "     |     |"
   puts ""
 end
-
-# when you call the display_board method, it's best to specify an array of values, like an array
-# what we're doing here is that we are coming up a data structure that best represents thte board state
-# and we've decided on is an hash. (other options: hash? nested array?) => this will have ramifications throughout our program in terms of how we extract data from this program and how we manipulate data within this data structure
-# but there aren't too many bad choices here
-# we decided on a hash, which will look like this: {1 => 'X', 2 => 'O', 3 => 'X'} // keys respresent the position and the values represent the values that we will display
-# this data structure will represent the board sastate at any point in our application
 
 def initialize_board
   new_board = {}
@@ -85,12 +77,14 @@ end
 
 def computer_ai_defense!(brd)
   ai_choices = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
-                [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # columns
-                [[3, 5, 7], [1, 5, 9]] # diagonals
+               [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # columns
+               [[3, 5, 7], [1, 5, 9]] # diagonals
+ 
   player_choices = brd.keys.select { |num| brd[num] == PLAYER_MARKER }
   ai_choices.each do |winning_line|
     winning_line.delete_if {|element| player_choices.include?(element)}
   end
+
   defense_choices = ai_choices.select {|winning_line| winning_line.count == 1 }.flatten
   defense_choices.select! {|choice| brd[choice] != COMPUTER_MARKER && brd[choice] != PLAYER_MARKER}
 
@@ -101,6 +95,26 @@ def computer_ai_defense!(brd)
     brd[square] = COMPUTER_MARKER
   else
     square = empty_squares(brd).sample
+    sleep 1
+    brd[square] = COMPUTER_MARKER
+  end
+end
+
+def computer_ai_offense!(brd)
+  ai_choices = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
+               [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # columns
+               [[3, 5, 7], [1, 5, 9]] # diagonals
+  
+  computer_choices = brd.keys.select { |num| brd[num] == COMPUTER_MARKER }
+  ai_choices.each do |winning_line|
+    winning_line.delete_if {|element| computer_choices.include?(element)}
+  end 
+  offense_choices = ai_choices.select {|winning_line| winning_line.count == 1 }.flatten
+  offense_choices.select! {|choice| brd[choice] != COMPUTER_MARKER && brd[choice] != PLAYER_MARKER}
+
+  if !(offense_choices.empty?)
+    square = offense_choices.sample
+    puts "Computer Attacking!"
     sleep 1
     brd[square] = COMPUTER_MARKER
   end
@@ -169,6 +183,9 @@ loop do
     player_places_piece!(board)
     break if someone_won?(board) || board_full?(board)
 
+    computer_ai_offense!(board)
+    break if someone_won?(board) || board_full?(board)
+
     computer_ai_defense!(board)
     break if someone_won?(board) || board_full?(board) # we want to send the someone_won message and teh board_full message. now, in order for us to determine that, we need the board argument / data strcutre along side it
   end
@@ -178,8 +195,8 @@ loop do
   record_winner_of_this_round(board, player_score, computer_score)
   count_this_round!(rounds)
 
-  if [computer_score.reduce(:+), player_score.reduce(:+)].include?(2)
-    if computer_score.reduce(:+) == 2
+  if [computer_score.reduce(:+), player_score.reduce(:+)].include?(5)
+    if computer_score.reduce(:+) == 5
       system 'clear'
       prompt("The Computer has won the game! Better luck next time")
       sleep 1
