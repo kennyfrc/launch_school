@@ -52,11 +52,15 @@ end
 
 def joinor(arr, sep=', ')
   user_options = ''
-  arr.each do |element|
-    if element != arr.last
-      user_options << "#{element}#{sep}"
-    else
-      user_options << "or #{element}"
+  if arr.count == 1
+    user_options << "#{arr[0]}"
+  else
+    arr.each do |element|
+      if element != arr.last
+        user_options << "#{element}#{sep}"
+      else
+        user_options << "or #{element}"
+      end
     end
   end
   user_options
@@ -174,8 +178,8 @@ loop do
   record_winner_of_this_round(board, player_score, computer_score)
   count_this_round!(rounds)
 
-  if [computer_score.reduce(:+), player_score.reduce(:+)].include?(5)
-    if computer_score.reduce(:+) == 5
+  if [computer_score.reduce(:+), player_score.reduce(:+)].include?(2)
+    if computer_score.reduce(:+) == 2
       system 'clear'
       prompt("The Computer has won the game! Better luck next time")
       sleep 1
