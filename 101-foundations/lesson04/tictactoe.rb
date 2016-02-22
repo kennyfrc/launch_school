@@ -3,6 +3,9 @@ require 'pry'
 INITIAL_MARKER = ' '.freeze
 PLAYER_MARKER = 'X'.freeze
 COMPUTER_MARKER = 'O'.freeze
+WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
+                [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # columns
+                [[3, 5, 7], [1, 5, 9]] # diagonals
 
 def prompt(msg)
   puts "=> #{msg}"
@@ -76,6 +79,30 @@ def computer_places_piece!(brd)
   brd[square] = COMPUTER_MARKER
 end
 
+def computer_ai_defense!(brd)
+  ai_choices = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
+                [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # columns
+                [[3, 5, 7], [1, 5, 9]] # diagonals
+  player_choices = brd.keys.select { |num| brd[num] == PLAYER_MARKER }
+  ai_choices.each do |winning_line|
+    winning_line.delete_if {|element| player_choices.include?(element)}
+  end
+  defense_choices = ai_choices.select {|winning_line| winning_line.count == 1 }.flatten
+  defense_choices.select! {|choice| brd[choice] != COMPUTER_MARKER && brd[choice] != PLAYER_MARKER}
+
+  if !(defense_choices.empty?)
+    square = defense_choices.sample
+    puts "Computer Defending!"
+    sleep 1
+    brd[square] = COMPUTER_MARKER
+  else
+    square = empty_squares(brd).sample
+    sleep 1
+    brd[square] = COMPUTER_MARKER
+  end
+end
+
+
 def board_full?(brd)
   empty_squares(brd) == []
 end
@@ -85,11 +112,7 @@ def someone_won?(brd)
 end
 
 def detect_winner(brd)
-  winning_lines = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
-                  [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # columns
-                  [[3, 5, 7], [1, 5, 9]] # diagonals
-
-  winning_lines.each do |line|
+  WINNING_LINES.each do |line|
     if brd[line[0]] == PLAYER_MARKER && brd[line[1]] == PLAYER_MARKER && brd[line[2]] == PLAYER_MARKER
       return 'Player'
     elsif brd[line[0]] == COMPUTER_MARKER && brd[line[1]] == COMPUTER_MARKER && brd[line[2]] == COMPUTER_MARKER
@@ -142,7 +165,7 @@ loop do
     player_places_piece!(board)
     break if someone_won?(board) || board_full?(board)
 
-    computer_places_piece!(board)
+    computer_ai_defense!(board)
     break if someone_won?(board) || board_full?(board) # we want to send the someone_won message and teh board_full message. now, in order for us to determine that, we need the board argument / data strcutre along side it
   end
 
