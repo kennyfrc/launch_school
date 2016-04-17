@@ -1,0 +1,6 @@
+1) download firefox
+2) go to preferences
+3) go to advanced
+4) go to settings
+5) add the HTTP proxy and add the PORT
+6) tick use this proxy server
