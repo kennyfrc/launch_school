@@ -1,5 +1,6 @@
 SUITS = ['H', 'S', 'D', 'C'].freeze
 VALUES = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'].freeze
+WIN_CONDITION = 21
 
 def prompt(msg)
   puts "=> #{msg}"
@@ -25,23 +26,23 @@ def total(cards)
   end
 
   values.select { |e| e == 'A' }.count.times do
-    sum -= 10 if sum > 21
+    sum -= 10 if sum > WIN_CONDITION
   end
 
   sum
 end
 
 def busted?(cards)
-  total(cards) > 21
+  total(cards) > WIN_CONDITION
 end
 
 def detect_result(dealer_cards, player_cards) # this basically returns symbols. intead of strings (which are mutable) or integers (which are also mutable and not readable), you use symbols which offer clarity and immutability
   player_total = total(player_cards)
   dealer_total = total(dealer_cards)
 
-  if player_total > 21
+  if player_total > WIN_CONDITION
     :player_busted
-  elsif dealer_total > 21
+  elsif dealer_total > WIN_CONDITION
     :dealer_busted
   elsif dealer_total < player_total
     :player
@@ -106,6 +107,13 @@ def play_again?
   answer.downcase.start_with?('y') # check if it's true or false
 end
 
+def double_check?
+  puts "----------"
+  prompt "Do you want to play a different X1 game? (y or n)"
+  answer = gets.chomp
+  answer.downcase.start_with?('y') # check if it's true or false
+end
+
 def display_scoreboard(dealer_cards, player_cards)
   puts "=============="
   puts "FINAL HANDS:"
@@ -138,117 +146,129 @@ player_score = []
 dealer_score = []
 rounds = [1]
 
-prompt "Welcome to 21!"
+prompt "Welcome to X1!"
 prompt "To win vs dealer, you must win 5 games."
 sleep 2
 
 loop do
-  deck = initialize_deck
-  player_cards = []
-  dealer_cards = []
-  prompt "Initialize player's deck#{player_cards}"
-  prompt "Initialize dealer's deck#{dealer_cards}"
-
-  prompt "Round #{rounds.reduce(:+)}"
-  sleep 2
-
-  2.times do
-    player_cards << deck.pop
-    dealer_cards << deck.pop
-  end
-
-  prompt "Dealer has #{dealer_cards[0]} and ?"
-  prompt "You have: #{player_cards[0]} and #{player_cards[1]}, for a total of #{total(player_cards)}."
-
   loop do
-    player_turn = nil
+      prompt "First, select a number that ends with 1 (e.g. 21, 31, 1221, etc.)"
+      response = gets.chomp
+      WIN_CONDITION = response.to_i
+      break if response.to_s.chars.last == "1"
+      prompt "Please choose a number that ends with 1. Try again."
+  end
     loop do
-      prompt "Would you like to hit or stay? (h or s)"
-      player_turn = gets.chomp.downcase
-      break if ['h', 's'].include?(player_turn)
-      prompt "Sorry, must enter 'h' or 's'."
-    end
+    prompt "Now playing #{WIN_CONDITION}"
 
-    if player_turn == 'h'
+    deck = initialize_deck
+    player_cards = []
+    dealer_cards = []
+
+    prompt "Round #{rounds.reduce(:+)}"
+    sleep 2
+
+    2.times do
       player_cards << deck.pop
-      prompt "You chose to hit!"
-      prompt "Your cards are now: #{player_cards}"
-      prompt "Your total is now: #{total(player_cards)}"
+      dealer_cards << deck.pop
     end
 
-    break if player_turn == 's' || busted?(player_cards)
-  end
+    prompt "Dealer has #{dealer_cards[0]} and ?"
+    prompt "You have: #{player_cards[0]} and #{player_cards[1]}, for a total of #{total(player_cards)}."
 
-  if busted?(player_cards)
+    loop do
+      player_turn = nil
+      loop do
+        prompt "Would you like to hit or stay? (h or s)"
+        player_turn = gets.chomp.downcase
+        break if ['h', 's'].include?(player_turn)
+        prompt "Sorry, must enter 'h' or 's'."
+      end
+
+      if player_turn == 'h'
+        player_cards << deck.pop
+        prompt "You chose to hit!"
+        prompt "Your cards are now: #{player_cards}"
+        prompt "Your total is now: #{total(player_cards)}"
+      end
+
+      break if player_turn == 's' || busted?(player_cards)
+    end
+
+    if busted?(player_cards)
+      display_scoreboard(dealer_cards, player_cards)
+      sleep 1
+      display_result(dealer_cards, player_cards)
+      log_results!(dealer_cards, player_cards, dealer_score, player_score)
+      display_scores(dealer_score, player_score)
+      log_round!(rounds)
+      if dealer_score.reduce(:+) == 5
+        prompt "dealer has won the game!"
+        play_again? ? next : break
+      end
+      next
+    else
+      prompt "You stayed at #{total(player_cards)}"
+    end
+
+    display_player_score(player_cards)
+    sleep 2
+
+    prompt "Dealer turn..."
+    sleep 2
+
+    loop do
+      break if busted?(dealer_cards) || total(dealer_cards) >= (WIN_CONDITION - 4)
+
+      prompt "Dealer hits!"
+      sleep 1
+      dealer_cards << deck.pop
+      prompt "Dealer's cards are now: #{dealer_cards}"
+    end
+
+    dealer_total = total(dealer_cards)
+    if busted?(dealer_cards)
+      prompt "Dealer total is now: #{dealer_total}"
+      display_scoreboard(dealer_cards, player_cards)
+      sleep 1
+      display_result(dealer_cards, player_cards)
+      log_results!(dealer_cards, player_cards, dealer_score, player_score)
+      display_scores(dealer_score, player_score)
+      log_round!(rounds)
+      if player_score.reduce(:+) == 5
+        prompt "Player has won the game!"
+        play_again? ? next : break
+      end
+      next
+    else
+      prompt "Dealer stays at #{dealer_total}"
+    end
+
+    display_dealer_score(dealer_cards)
+    sleep 2
+
     display_scoreboard(dealer_cards, player_cards)
-    sleep 1
+
     display_result(dealer_cards, player_cards)
+
     log_results!(dealer_cards, player_cards, dealer_score, player_score)
+
     display_scores(dealer_score, player_score)
+
     log_round!(rounds)
-    if dealer_score.reduce(:+) == 2
-      prompt "dealer has won the game!"
+
+    if dealer_score.reduce(:+) == 5
+      prompt "Dealer has won the game!" 
       play_again? ? next : break
-    end
-    next
-  else
-    prompt "You stayed at #{total(player_cards)}"
-  end
-
-  display_player_score(player_cards)
-  sleep 2
-
-  prompt "Dealer turn..."
-  sleep 2
-
-  loop do
-    break if busted?(dealer_cards) || total(dealer_cards) >= 17
-
-    prompt "Dealer hits!"
-    sleep 1
-    dealer_cards << deck.pop
-    prompt "Dealer's cards are now: #{dealer_cards}"
-  end
-
-  dealer_total = total(dealer_cards)
-  if busted?(dealer_cards)
-    prompt "Dealer total is now: #{dealer_total}"
-    display_scoreboard(dealer_cards, player_cards)
-    sleep 1
-    display_result(dealer_cards, player_cards)
-    log_results!(dealer_cards, player_cards, dealer_score, player_score)
-    display_scores(dealer_score, player_score)
-    log_round!(rounds)
-    if player_score.reduce(:+) == 2
+    elsif player_score.reduce(:+) == 5
       prompt "Player has won the game!"
       play_again? ? next : break
     end
-    next
-  else
-    prompt "Dealer stays at #{dealer_total}"
+
   end
 
-  display_dealer_score(dealer_cards)
-  sleep 2
-
-  display_scoreboard(dealer_cards, player_cards)
-
-  display_result(dealer_cards, player_cards)
-
-  log_results!(dealer_cards, player_cards, dealer_score, player_score)
-
-  display_scores(dealer_score, player_score)
-
-  log_round!(rounds)
-
-  if dealer_score.reduce(:+) == 5
-    prompt "Dealer has won the game!" 
-    play_again? ? next : break
-  elsif player_score.reduce(:+) == 5
-    prompt "Player has won the game!"
-    play_again? ? next : break
-  end
+  double_check? ? next : break
 
 end
 
-prompt "Thank you for playing Twenty-One! Good bye!"
+prompt "Thank you for playing X1! Good bye!"
