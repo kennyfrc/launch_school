@@ -40,6 +40,34 @@ class Board
     nil
   end
 
+  def two_identical_markers?(squares)
+    markers = squares.select(&:marked?).collect(&:marker)
+    return false if markers.size != 2
+    markers.min == markers.max
+  end
+
+  def two_computer_markers?(squares)
+
+  end
+
+  def two_human_markers?(squares)
+
+  end
+
+  def nearly_filled?
+    !!remaining_marker
+  end
+
+  def remaining_marker
+    WINNING_LINES.each do |line|
+      squares = @squares.values_at(*line)
+      if two_identical_markers?(squares)
+        return @squares.select {|location, square| line.include?(location) && square.marker == Square::INITIAL_MARKER}
+      end
+    end
+    nil
+  end
+
   def reset
     (1..9).each { |key| @squares[key] = Square.new }
   end
@@ -87,9 +115,12 @@ end
 
 class Player
   attr_reader :marker
+  attr_accessor :score
+  attr_reader :ai
 
   def initialize(marker)
     @marker = marker
+    @score = 0
   end
 end
 
@@ -107,6 +138,21 @@ class TTTGame
     @current_maker = FIRST_TO_MOVE
   end
 
+  def log_score
+    case board.winning_marker
+    when HUMAN_MARKER
+      human.score += 1
+    when COMPUTER_MARKER
+      computer.score += 1
+    end
+  end
+
+  def display_score
+    puts ""
+    puts "SCOREBOARD:"
+    puts "Human: #{human.score} | Computer: #{computer.score}"
+  end
+
   def play
     display_welcome_message
     clear_board
@@ -120,6 +166,8 @@ class TTTGame
         clear_screen_and_display_board
       end
       display_result
+      log_score
+      display_score
       break unless play_again?
       reset
       display_play_again_message
@@ -167,8 +215,17 @@ class TTTGame
     end
   end
 
+  def joinor(arr)
+    last_number = arr.pop
+    initial_numbers = []
+    arr.each do |num|
+      initial_numbers << num.to_s
+    end
+    stringified_list = initial_numbers.join(', ') + " or #{last_number}"
+  end
+
   def human_moves
-    puts "Choose a square between (#{board.unmarked_keys.join(' ')})."
+    puts "Choose a square between #{joinor(board.unmarked_keys)}."
     num = nil
     loop do
       num = gets.chomp.to_i
@@ -178,9 +235,17 @@ class TTTGame
     board[num] = human.marker
   end
 
+  def ai_target
+    board.remaining_marker.keys.first
+  end
+
   def computer_moves
-    num = board.unmarked_keys.sample
-    board[num] = computer.marker
+    if board.nearly_filled?
+      board[ai_target] = computer.marker 
+    else
+      num = board.unmarked_keys.sample
+      board[num] = computer.marker   
+    end
   end
 
   def play_again?
