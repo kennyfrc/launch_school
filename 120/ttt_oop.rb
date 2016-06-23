@@ -3,7 +3,7 @@ require 'pry'
 class Board
   attr_reader :squares
 
-  WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + 
+  WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] +
                   [[1, 4, 7], [2, 5, 8], [3, 6, 9]] +
                   [[1, 5, 9], [3, 5, 7]]
 
@@ -13,7 +13,7 @@ class Board
   end
 
   def unmarked_keys
-    @squares.keys.select {|key| @squares[key].unmarked?}
+    @squares.keys.select { |key| @squares[key].unmarked? }
   end
 
   def full?
@@ -41,7 +41,7 @@ class Board
   end
 
   def reset
-    (1..9).each {|key| @squares[key] = Square.new}
+    (1..9).each { |key| @squares[key] = Square.new }
   end
 
   def draw
@@ -61,7 +61,6 @@ class Board
   def []=(num, marker)
     @squares[num].marker = marker
   end
-
 end
 
 class Square
@@ -84,7 +83,6 @@ class Square
   def marked?
     marker != INITIAL_MARKER
   end
-
 end
 
 class Player
@@ -114,13 +112,13 @@ class TTTGame
     clear_board
     loop do
       clear_screen_and_display_board
-        loop do
-          human_moves
-          break if board.full? || board.someone_won?
-          computer_moves
-          break if board.full? || board.someone_won?
-          clear_screen_and_display_board
-        end
+      loop do
+        human_moves
+        break if board.full? || board.someone_won?
+        computer_moves
+        break if board.full? || board.someone_won?
+        clear_screen_and_display_board
+      end
       display_result
       break unless play_again?
       reset
@@ -163,7 +161,7 @@ class TTTGame
     when human.marker
       puts "You won!"
     when computer.marker
-      puts "Computer won!"  
+      puts "Computer won!"
     else
       puts "It's a tie!"
     end
@@ -184,7 +182,7 @@ class TTTGame
     num = board.unmarked_keys.sample
     board[num] = computer.marker
   end
-  
+
   def play_again?
     puts "Do you want to play again? (y/n)"
     choice = ''
