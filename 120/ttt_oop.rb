@@ -46,20 +46,16 @@ class Board
     markers.min == markers.max
   end
 
-  def two_computer_markers?(squares)
-
-  end
-
-  def two_human_markers?(squares)
-
-  end
-
   def nearly_filled?
-    !!remaining_marker
+    !!remaining_square
   end
 
-  def remaining_marker
-    WINNING_LINES.each do |line|
+  def mid_available?
+    @squares[5].marker == Square::INITIAL_MARKER
+  end
+
+  def remaining_square
+    WINNING_LINES.shuffle.each do |line|
       squares = @squares.values_at(*line)
       if two_identical_markers?(squares)
         return @squares.select {|location, square| line.include?(location) && square.marker == Square::INITIAL_MARKER}
@@ -236,12 +232,14 @@ class TTTGame
   end
 
   def ai_target
-    board.remaining_marker.keys.first
+    board.remaining_square.keys.first
   end
 
   def computer_moves
     if board.nearly_filled?
       board[ai_target] = computer.marker 
+    elsif board.mid_available?
+      board[5] = computer.marker
     else
       num = board.unmarked_keys.sample
       board[num] = computer.marker   
