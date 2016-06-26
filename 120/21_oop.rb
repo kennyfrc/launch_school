@@ -109,7 +109,7 @@ end
 
 class Deck
   SUITS = ['C', 'D', 'H', 'S'].freeze
-  VALUES = (2..10).to_a + ['J', 'Q', 'K', 'A'].freeze
+  VALUES = ((2..10).to_a + ['J', 'Q', 'K', 'A']).freeze
 
   attr_accessor :cards
 
