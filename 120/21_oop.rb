@@ -8,10 +8,6 @@ class Player
     @hand = Hand.new
   end
 
-  def stay?
-    hand.value < Game::WIN_CONDITION || hand.value == Game::WIN_CONDITION
-  end
-
   def busted?
     hand.value > Game::WIN_CONDITION
   end
@@ -151,7 +147,7 @@ class Game
       player_turn
       if human.busted?
         display_human_busted_message
-      elsif human.stay?
+      else
         display_human_stay_message
         dealer_turn
         show_result
