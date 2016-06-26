@@ -58,8 +58,6 @@ class Hand
   def ace_corrector(current_value)
     if dealt_cards.flatten.include?('A') && current_value >= Game::WIN_CONDITION
       current_value -= 10
-    elsif dealt_cards.flatten.include?('A') && current_value >= Game::WIN_CONDITION && dealt_cards.size > 2
-      current_value
     else
       current_value
     end
