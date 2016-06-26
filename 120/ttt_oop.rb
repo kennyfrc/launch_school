@@ -124,17 +124,21 @@ class TTTGame
   HUMAN_MARKER = "X"
   COMPUTER_MARKER = "O"
   FIRST_TO_MOVE = HUMAN_MARKER
+  WIN_CONDITION = 5
 
   attr_reader :board, :human, :computer
+  attr_accessor :rounds
 
   def initialize
     @board = Board.new
     @human = Player.new(HUMAN_MARKER)
     @computer = Player.new(COMPUTER_MARKER)
     @current_maker = FIRST_TO_MOVE
+    @rounds = 1
   end
 
-  def log_score
+  def log_score_and_round
+    self.rounds += 1
     case board.winning_marker
     when HUMAN_MARKER
       human.score += 1
@@ -144,8 +148,9 @@ class TTTGame
   end
 
   def display_score
+    sleep 1
     puts ""
-    puts "SCOREBOARD:"
+    puts "SCORE:"
     puts "Human: #{human.score} | Computer: #{computer.score}"
   end
 
@@ -153,25 +158,57 @@ class TTTGame
     display_welcome_message
     clear_board
     loop do
-      clear_screen_and_display_board
       loop do
-        human_moves
-        break if board.full? || board.someone_won?
-        computer_moves
-        break if board.full? || board.someone_won?
         clear_screen_and_display_board
+        loop do
+          human_moves
+          break if board.full? || board.someone_won?
+          computer_moves
+          break if board.full? || board.someone_won?
+          clear_screen_and_display_board
+        end
+        display_result
+        log_score_and_round
+        display_score
+        if someone_won_five_rounds?
+          display_winner
+          break
+        else
+          setup_next_round
+        end
       end
-      display_result
-      log_score
-      display_score
       break unless play_again?
-      reset
+      reset_game
       display_play_again_message
     end
     display_goodbye_message
   end
 
   private
+
+  def someone_won_five_rounds?
+    [computer.score, human.score].include?(WIN_CONDITION)
+  end
+
+  def display_winner
+    system 'clear'
+    puts "Computer won the game! (Final Score: #{computer.score}-#{human.score})" if computer.score == WIN_CONDITION
+    puts "You won the game! (#{human.score}-#{computer.score})" if human.score == WIN_CONDITION
+  end
+
+  def setup_next_round
+    sleep 2
+    display_next_round_message
+    sleep 1
+    reset
+  end
+
+  def display_next_round_message
+    system 'clear'
+    puts "Round #{rounds}!"
+    puts "SCOREBOARD: Human: #{human.score} | Computer: #{computer.score}"
+    puts ""
+  end
 
   def display_welcome_message
     puts "Welcome to Tic Tac Toe!"
@@ -189,6 +226,7 @@ class TTTGame
 
   def display_board
     puts "You're \'#{human.marker}\'. Computer is \'#{computer.marker}\'"
+    puts "SCOREBOARD: Human: #{human.score} | Computer: #{computer.score}"
     board.draw
     puts ""
   end
@@ -263,6 +301,27 @@ class TTTGame
     board.reset
     @current_marker = FIRST_TO_MOVE
     clear_board
+  end
+
+  def reset_game
+    board.reset
+    @current_marker = FIRST_TO_MOVE
+    clear_board
+    clear_rounds_and_score
+    new_game_message
+  end
+
+  def new_game_message
+    system 'clear'
+    sleep 1
+    puts "New Game Loading..."
+    sleep 1
+  end
+
+  def clear_rounds_and_score
+    self.rounds = 0
+    human.score = 0
+    computer.score = 0
   end
 
   def display_play_again_message
