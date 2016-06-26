@@ -123,7 +123,7 @@ class Deck
     end
   end
 
-  def draw_card(hand)
+  def draw_card!(hand)
     hand << cards.pop
   end
 end
@@ -258,7 +258,7 @@ class Game
       if dealer.hand.value < 17
         sleep 1
         puts "Dealer hits!"
-        deck.draw_card(dealer.hand.dealt_cards)
+        deck.draw_card!(dealer.hand.dealt_cards)
         sleep 1
       elsif dealer.busted?
         sleep 1
@@ -297,7 +297,7 @@ class Game
       case choice
       when 'h'
         system 'clear'
-        deck.draw_card(human.hand.dealt_cards)
+        deck.draw_card!(human.hand.dealt_cards)
         break if human.busted?
       when 's'
         system 'clear'
