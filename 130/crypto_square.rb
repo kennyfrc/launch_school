@@ -1,21 +1,16 @@
 require 'pry'
 
 class Crypto
-
   attr_reader :sentence
   attr_accessor :segments
 
   def initialize(sentence)
-    @sentence = sentence
-    @cipher = ""
+    @normalized_sentence = sentence.gsub(/[\s#$%^&!,.]/, '').downcase
+    @cipher = ''
   end
 
   def normalize_plaintext
-    sentence.gsub(/[\s#$%^&!,.]/, "").downcase
-  end
-
-  def perfect_square?
-    Math.sqrt(length) % 1 == 0
+    @normalized_sentence
   end
 
   def sqrt_of_sentence
@@ -40,6 +35,8 @@ class Crypto
     segments
   end
 
+# always start with methods that you may want to use (in order to "think" declaratively)
+
   def cipher_arr
     cipher_arr = []
     plaintext_segments.each_index do |index|
@@ -57,7 +54,7 @@ class Crypto
   end
 
   def ciphertext
-    ciphertext = ""
+    ciphertext = ''
     cipher_arr.each do |arr|
       ciphertext += arr.join
     end
@@ -69,7 +66,7 @@ class Crypto
     cipher_arr.each do |arr|
       other_cipher_arr << arr.join
     end
-    other_cipher_arr.join(" ")
+    other_cipher_arr.join(' ')
   end
 end
 
