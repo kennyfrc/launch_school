@@ -1,5 +1,5 @@
+# some documentation?
 class Anagram
-
   attr_reader :detector
 
   def initialize(detector)
@@ -7,10 +7,10 @@ class Anagram
   end
 
   def match(array_of_words)
-    filtered_words = array_of_words.map(&:downcase).select do |word| 
-      word.chars.all? do |chars| 
-        detector_letters.include?(chars) 
-      end and pass_anagram_checker?(word)
+    filtered_words = array_of_words.map(&:downcase).select do |word|
+      word.chars.all? do |chars|
+        detector_letters.include?(chars)
+      end && pass_anagram_checker?(word)
     end
     return filtered_words.map(&:capitalize) if capitalized?(detector)
     filtered_words
@@ -36,7 +36,6 @@ class Anagram
   end
 
   def chars_of(str)
-    counter = 0
     hash_of_letters = Hash.new(0)
     str.chars.each do |letter|
       hash_of_letters[letter] += 1
@@ -45,7 +44,7 @@ class Anagram
   end
 
   def same_chars_as_detector?(arr)
-    chars_of(arr) == chars_of(self.detector.downcase)
+    chars_of(arr) == chars_of(detector.downcase)
   end
 
   def same_size_as_detector?(arr)
@@ -53,6 +52,6 @@ class Anagram
   end
 
   def not_self?(arr)
-    arr != self.detector.downcase
+    arr != detector.downcase
   end
 end
