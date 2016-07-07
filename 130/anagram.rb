@@ -19,7 +19,7 @@ class Anagram
   private
 
   def pass_anagram_checker?(arr)
-    same_size_as_detector?(arr) && same_chars_as_detector?(arr) && not_self?(arr)
+    same_size_as_detector?(arr) && same_char_count_as_detector?(arr) && not_self?(arr)
   end
 
   def capitalized?(detector)
@@ -43,7 +43,7 @@ class Anagram
     hash_of_letters
   end
 
-  def same_chars_as_detector?(arr)
+  def same_char_count_as_detector?(arr)
     chars_of(arr) == chars_of(detector.downcase)
   end
 
