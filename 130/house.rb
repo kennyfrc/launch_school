@@ -1,6 +1,7 @@
+# 06/04/16 - Challenge: House
 class House
   def self.recite
-    paragraph = ""
+    paragraph = ''
     (1..self.pieces.size).each do |num|
       paragraph += self.combine_pieces(self.pieces.last(num))
     end
@@ -10,7 +11,7 @@ class House
   def self.combine_pieces(pieces)
     line = "This is "
     pieces.each do |piece|
-      line += self.pieces.last == piece ? "#{piece[0]}." + "" : "#{piece[0]}" + "\n"
+      line += self.pieces.last == piece ? "#{piece[0]}." + '' : "#{piece[0]}" + "\n"
       line += "#{piece[1]}" + " "
     end
     line

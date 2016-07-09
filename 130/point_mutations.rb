@@ -1,10 +1,9 @@
-require 'pry'
-
+# 05/14/16 - Challenge: Point Mutations
 class DNA
   attr_accessor :strand_as_array
 
   def initialize(strand)
-    @strand_as_array = strand.split("")
+    @strand_as_array = strand.split('')
   end
 
   def hamming_distance(other_strand)
@@ -17,8 +16,8 @@ class DNA
   end
 
   def zip_strands_to_arr(other_strand)
-    other_strand_as_array = other_strand.split("")
+    other_strand_as_array = other_strand.split('')
     zipped_strands = strand_as_array.zip(other_strand_as_array)
-    zipped_strands_wo_danglers = zipped_strands.select { |arr| !arr.include?(nil) }
+    zipped_strands.select { |arr| !arr.include?(nil) }
   end
 end

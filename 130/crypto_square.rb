@@ -1,5 +1,4 @@
-require 'pry'
-
+# 05/07/16 - Challenge: Crypto Square
 class Crypto
   attr_reader :sentence
   attr_accessor :segments
@@ -35,8 +34,6 @@ class Crypto
     segments
   end
 
-# always start with methods that you may want to use (in order to "think" declaratively)
-
   def cipher_arr
     cipher_arr = []
     plaintext_segments.each_index do |index|
@@ -69,29 +66,3 @@ class Crypto
     other_cipher_arr.join(' ')
   end
 end
-
-# Implement the classic method for composing secret messages called a square code.
-
-# The input is first normalized: The spaces and punctuation are removed from the English text and the message is down-cased.
-
-# Then, the normalized characters are broken into rows. These rows can be regarded as forming a rectangle when printed with intervening newlines.
-
-# For example, the sentence
-
-# If man was meant to stay on the ground god would have given us roots
-
-# is 54 characters long.
-
-# Broken into 8-character columns, it yields 7 rows.
-
-# Those 7 rows produce this rectangle when printed one per line:
-
-# [x] remove spaces and punctuation [\s,.:;] 
-# [x] downcased
-# break the string into rows using the return value of sqrt(String.length).is_a?(Integer) unless not a perfect square
-# split it using (0 ... diff), (diff + 1 ... diff + 1 + n) => should shoot an array of arrays
-# then iterate again then zip it
-
-# normalize_plaintext()
-# 
-# break_down_sentence Math.sqrt(50) % 1 == 0

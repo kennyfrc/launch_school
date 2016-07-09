@@ -1,4 +1,4 @@
-# input: pass a detector then invoke match to detect if any of the words in an array are anagrams of the initialized detector
+# 04/23/16 - Challenge: Anagrams
 class Anagram
   attr_reader :detector
 
