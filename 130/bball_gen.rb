@@ -1,3 +1,4 @@
+# for assessment
 module MVPable
   def on_the_high_side
     base = (70...100).to_a.sample

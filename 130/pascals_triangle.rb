@@ -1,3 +1,4 @@
+# not done
 class Triangle
   attr_accessor :size, :lines
 

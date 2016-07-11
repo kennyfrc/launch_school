@@ -1,4 +1,4 @@
-# 06/04/16 - Challenge: House
+# not done
 class House
   def self.recite
     paragraph = ''
