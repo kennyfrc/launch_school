@@ -14,10 +14,16 @@ class Trinary
   end
 
   def to_decimal
-    return 0 if INVALID_CHARS.any? {|char| arr_of_nums.include?(char)}
+    return 0 if invalid_trinary?
     arr_of_nums.reverse.map.with_index do |char, index|
       char.to_i * (BASE ** index)
     end.sum
+  end
+
+  private
+
+  def invalid_trinary?
+    INVALID_CHARS.any? {|char| arr_of_nums.include?(char)}
   end
 end
 
